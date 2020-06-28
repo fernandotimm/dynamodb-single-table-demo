@@ -1,0 +1,22 @@
+This project was created for the purpose of showcasing a bug to the Dynamoose team.
+It contains a simple test to help reproducing a probable bug on the Query function.
+
+The idea is to use the Query() function instead of the Scan() function in order to follow the recommendations of DB modeling as seen on AWS re:Invent 2019. 
+Here's the complete video of the talk: https://youtu.be/DIQVJqiSUkE
+
+
+Install dependencies:
+$ yarn
+or
+$ npm install
+
+Run a local DynamoDB instance using the docker-compose file
+$ docker-compose -f docker-compose.yaml up -d
+
+Run the simple test to insert fake data and to run the query functions to list them
+$ yarn test
+or
+$ npm run test
+
+You should see the error:
+"Index can't be found for query."
