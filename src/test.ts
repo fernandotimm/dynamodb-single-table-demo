@@ -1,7 +1,7 @@
 import * as dynamoose from 'dynamoose';
 import { uuid } from 'uuidv4';
 
-//Script to support describing issue on Dynamoose
+//Script to support describing an issue for the Dynamoose team
 
 interface ICreateUserProfileDTO {
   name: string;
@@ -150,9 +150,6 @@ async function showPlaces() {
 
 async function executeTest() {
   //creates a profile in the single table
-
-  
-
   await createProfile({
     username: `myuser-${fakeId}`,
     name: 'My User',
@@ -162,10 +159,10 @@ async function executeTest() {
   //creates a place in the single table
   await createPlace({ username: `myuser-${fakeId}`, status: 'AVAILABLE' });
 
-  //should show the profiles
+  //should show the profiles related to a specific user
   await showProfiles();
 
-  //should show the places
+  //should show the places related to a specific user
   await showPlaces();
 }
 
