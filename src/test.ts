@@ -23,6 +23,8 @@ dynamoose.aws.sdk.config.update({
 
 dynamoose.aws.ddb.local();
 
+const fakeId = uuid();
+
 //Schema that defines the structure of a Place entry on the single table
 const UserPlaceSchema = new dynamoose.Schema(
   {
@@ -123,33 +125,33 @@ async function showProfiles() {
   const resultProfiles = await dynamoose
     .model('MyTable', UserProfileSchema)
     .query('pk')
-    .beginsWith('USER#')
+    .eq(`USER#myuser-${fakeId}`)
     .and()
-    .where('SK')
+    .where('sk')
     .beginsWith('PROFILE#')
     .exec();
 
-  console.log(`\nShow Profiles:\n ${JSON.stringify(result)}\n`);
+  console.log(`\nShow Profiles:\n ${JSON.stringify(resultProfiles)}\n`);
 }
 
 //Here I execute a query to retrieve the places from DynamoDB and it says the "index can't be found for query"
 async function showPlaces() {
-  const result = await dynamoose
-    .model('Single', UserPlaceSchema)
+  const resultPlaces = await dynamoose
+    .model('MyTable', UserPlaceSchema)
     .query('pk')
-    .beginsWith('USER#')
+    .eq(`USER#myuser-${fakeId}`)
     .and()
-    .where('SK')
+    .where('sk')
     .beginsWith('PLACE#')
     .exec();
 
-  console.log(`\nShow Places:\n ${JSON.stringify(result)}\n`);
+  console.log(`\nShow Places:\n ${JSON.stringify(resultPlaces)}\n`);
 }
 
 async function executeTest() {
   //creates a profile in the single table
 
-  const fakeId = uuid();
+  
 
   await createProfile({
     username: `myuser-${fakeId}`,
