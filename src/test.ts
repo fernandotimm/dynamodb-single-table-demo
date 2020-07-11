@@ -31,6 +31,13 @@ const UserPlaceSchema = new dynamoose.Schema(
     pk: {
       type: String,
       hashKey: true,
+      index: { 
+        // creates a LOCAL secondary index with the name `placeStatusDateIndex`, hashKey `pk`, rangeKey `placeStatusDate`
+        name: 'placeStatusDateIndex',
+        global: false,
+        rangeKey: 'placeStatusDate',
+        //throughput: {read: 5, write: 10}
+      }
     },
     sk: {
       type: String,
@@ -48,6 +55,22 @@ const UserPlaceSchema = new dynamoose.Schema(
       type: String,
       required: true,
     },
+    placeStatusDate: {
+      type: String,
+      //required: true,
+    },
+    statusAvailableId: {
+      // that would be used to query all places with status = AVAILABLE
+      type: String,
+      index: { 
+        // creates a GLOBAL Secondary Index (GSI) with the name `statusAvailableIndex`, hashKey `statusAvailableId`, NO range
+        name: 'statusAvailableIndex',
+        global: true,
+        project: ['pk', 'placeId', 'status'],
+        //throughput: {read: 5, write: 10}
+      }
+
+    }
   },
   {
     timestamps: true,
@@ -108,6 +131,7 @@ async function createPlace({
   status,
 }: ICreatePlaceDTO): Promise<any> {
   const placeId = uuid();
+  const statusAvailableId = status === 'AVAILABLE' ? uuid() : '';
 
   const place = await dynamoose.model('MyTable', UserPlaceSchema).create({
     pk: `USER#${username}`,
@@ -115,12 +139,13 @@ async function createPlace({
     username,
     placeId,
     status,
+    statusAvailableId,
   });
 
   console.log(`\nPlace created!for ${username}!\n ${JSON.stringify(place)}\n`);
 }
 
-//Here I execute a query to retrieve the places from DynamoDB and it says the "index can't be found for query"
+//Here I execute a query to retrieve the profiles from the DynamoDB single-table
 async function showProfiles() {
   const resultProfiles = await dynamoose
     .model('MyTable', UserProfileSchema)
@@ -134,7 +159,7 @@ async function showProfiles() {
   console.log(`\nShow Profiles:\n ${JSON.stringify(resultProfiles)}\n`);
 }
 
-//Here I execute a query to retrieve the places from DynamoDB and it says the "index can't be found for query"
+//Here I execute a query to retrieve the places from the DynamoDB single-table
 async function showPlaces() {
   const resultPlaces = await dynamoose
     .model('MyTable', UserPlaceSchema)
@@ -143,6 +168,18 @@ async function showPlaces() {
     .and()
     .where('sk')
     .beginsWith('PLACE#')
+    .exec();
+
+  console.log(`\nShow Places:\n ${JSON.stringify(resultPlaces)}\n`);
+}
+
+
+async function showAvailablePlaces() {
+  const resultPlaces = await dynamoose
+    .model('MyTable', UserPlaceSchema)
+    .query('statusAvailableId')
+    .using('statusAvailableIndex')
+    .eq('*')
     .exec();
 
   console.log(`\nShow Places:\n ${JSON.stringify(resultPlaces)}\n`);
@@ -158,12 +195,17 @@ async function executeTest() {
 
   //creates a place in the single table
   await createPlace({ username: `myuser-${fakeId}`, status: 'AVAILABLE' });
+  await createPlace({ username: `myuser-${fakeId}`, status: 'AVAILABLE' });
+  await createPlace({ username: `myuser-${fakeId}`, status: 'UNAVAILABLE' });
 
   //should show the profiles related to a specific user
   await showProfiles();
 
   //should show the places related to a specific user
-  await showPlaces();
+  //await showPlaces();
+
+  console.log('available!!!!!');
+  await showAvailablePlaces();
 }
 
 executeTest();
