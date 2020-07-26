@@ -7,3 +7,4 @@ services:
     container_name: dynamodb-local
     ports:
       - "8000:8000"
+    command: -jar DynamoDBLocal.jar -sharedDb
