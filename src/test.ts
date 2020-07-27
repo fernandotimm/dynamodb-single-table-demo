@@ -14,7 +14,6 @@ interface ICreatePlaceDTO {
   placeStatus?: string;
 }
 
-
 AWS.config.update({
   accessKeyId: 'xxxx',
   secretAccessKey: 'xxxx',
@@ -31,14 +30,15 @@ async function createTable(): Promise<any> {
   
   try {
     const result = await dynamodb.createTable(params).promise();
-    console.log("Created table. Table description JSON:", JSON.stringify(result, null, 2));
+    console.log('Created table. Table description JSON:', JSON.stringify(result, null, 2));
     
     return result;
 
   } catch (err) {
-    console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+    console.error('Unable to create table', err.message);
   }
 }
+
 
 //Function to create a Profile in the single table MyTable
 async function createProfile({
@@ -66,10 +66,10 @@ async function createProfile({
   // Call DynamoDB to add the item to the table
   try {
     const result = await dynamodb.putItem(params).promise();
-    console.log("Success", `\nProfile created for ${username}!\n`);
+    console.log('Success', `Profile created for ${username}!\n`);
     return result;
   } catch (err) {
-    console.log("Error creating profile", `\n ${JSON.stringify(err, null, 2)}\n`);
+    console.log('Error creating profile', `${JSON.stringify(err, null, 2)}\n`);
   };
 }
 
@@ -101,14 +101,15 @@ async function createPlace({
   // Call DynamoDB to add the item to the table
   try {
     const result = await dynamodb.putItem(params).promise();
-    console.log("Success", `\nPlace created for ${username}!\n`);
+    console.log('Success', `Place created for ${username}!\n`);
     return result;
 
   } catch (err) {
-    console.log("Error creating Place", `\n ${JSON.stringify(err, null, 2)}\n`);
+    console.log('Error creating Place', `${JSON.stringify(err, null, 2)}\n`);
   };
     
 }
+
 
 //Execute a query to retrieve the places from DynamoDB
 async function showProfiles() {
@@ -129,7 +130,7 @@ async function showProfiles() {
     if (result.Items) {
       console.log('SHOW PROFILES');
       result.Items.forEach(function(element, index, array) {
-        console.log(element.fullname.S + " (" + element.email.S + ")");
+        console.log(`${element.fullname.S} ( ${element.email.S} )`);
       });
     }
     return result;
@@ -138,6 +139,7 @@ async function showProfiles() {
     console.log("Error", err);
   }
 }
+
 
 //Execute a query to retrieve the places from DynamoDB
 async function showPlaces(): Promise<any> {
@@ -158,7 +160,7 @@ async function showPlaces(): Promise<any> {
     if (result.Items) {
       console.log("\nSHOW PLACES BY USER");
       result.Items.forEach(function(element, index, array) {
-        console.log(element.username.S + " (" + element.placeStatus.S + ")");
+        console.log(`${element.username.S} ( ${element.placeStatus.S} )`);
       });
     }
     return result;
@@ -189,7 +191,7 @@ async function showPlacesStatusByUser(): Promise<any> {
     if (result.Items) {
       console.log("\nSHOW PLACES STATUS BY USER");
       result.Items.forEach(function(element, index, array) {
-        console.log(element.username.S + " (" + element.placeId.S + " " + element.placeStatus.S + ")");
+        console.log(`${element.username.S} ( ${element.placeId.S} ${element.placeStatus.S} )`);
       });
     }
     return result;
@@ -219,7 +221,7 @@ async function showAllPlacesByStatusAvailable(): Promise<any> {
     if (result.Items) {
       console.log("\nSHOW PLACES STATUS BY USER");
       result.Items.forEach(function(element, index, array) {
-        console.log(element.sk.S + " (" + element.username.S + " " + element.placeStatus.S + ")");
+        console.log(`${element.sk.S} ( ${element.username.S} ${element.placeStatus.S} )`);
       });
     }
     return result;
@@ -249,7 +251,7 @@ async function showAllPlaces(): Promise<any> {
     if (result.Items) {
       console.log("\nSHOW ALL PLACES");
       result.Items.forEach(function(element, index, array) {
-        console.log(element.sk.S + " (" + element.placeStatus.S + ")");
+        console.log(`${element.sk.S} ( ${element.placeStatus.S} )`);
       });
     }
     return result;
@@ -258,8 +260,6 @@ async function showAllPlaces(): Promise<any> {
     console.log("Error", err);
   }
 }
-
-
 
 
 async function executeTest() {
