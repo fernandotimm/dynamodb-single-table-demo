@@ -13,23 +13,37 @@ The list below shows the access patterns and the related schema, LSI and GSIs.
 Please consider that the condition to test the **Partition Key** MUST be always "equal to". For the **Sort Key**, it's possible to use other operators like _EQ, LE, LT, GE, GT, BEGINS_WITH() and BETWEEN()_.
 
 #### Single Table Schema:
-![Single Table](schema-images/singletable.png)
+![Single Table](schema-images/singletable.png)  
 Example of Access Pattern:  
-**_Return all Places owned by user john_**  
+**_Query all Places owned by user john_**  
 _"PK = USER#john AND BEGINS_WITH(SK, 'PLACE#')"_  
   
 ---
   
 #### Local Secondary Index (placeStatusDateIndex):
-![LSI](schema-images/lsi.png)
+![LSI](schema-images/lsi.png)  
 Example of Access Pattern:  
-**Returns all available places owned by user john**  
+**_Query all available places owned by user john_**  
 _"PK = USER#john AND BEGINS_WITH(PlaceStatusDate, 'AVAILABLE#')"_  
   
 ---  
   
-
-
+#### Global Secondary Index (statusAvailableIndex):  
+![GSI1](schema-images/gsi-status-available.png)  
+Example of Access Pattern:  
+**_Query all available places_**  
+_"PlaceStatus = 'AVAILABLE' AND BEGINS_WITH(SK, 'PLACE#')"_  
+  
+---  
+  
+#### Global Secondary Index (placeIndex):  
+![GSI2](schema-images/gsi-all-places.png)  
+Example of Access Pattern:  
+**_Query all places_**  
+_"EntryType = 'PLACE' AND BEGINS_WITH(SK, 'PLACE#')"_  
+  
+---  
+  
 ## How to run
 ### Install dependencies:
 ```
