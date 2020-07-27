@@ -6,7 +6,7 @@
     "test": "ts-node-dev -r tsconfig-paths/register --inspect --transpileOnly --ignore-watch node_modules src/test.ts"
   },
   "dependencies": {
-    "dynamoose": "^2.3.0-beta.1",
+    "aws-sdk": "^2.713.0",
     "uuidv4": "^6.1.1"
   },
   "devDependencies": {
