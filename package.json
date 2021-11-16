@@ -6,7 +6,7 @@
     "test": "ts-node-dev -r tsconfig-paths/register --inspect --transpileOnly --ignore-watch node_modules src/test.ts"
   },
   "dependencies": {
-    "aws-sdk": "^2.713.0",
+    "aws-sdk": "^2.814.0",
     "uuidv4": "^6.1.1"
   },
   "devDependencies": {
